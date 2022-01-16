@@ -64,8 +64,8 @@ So the structure of the files seems to go like this:
 2. (offset 0x1e , dec 28) 1 byte set to  1F, seems like some kind of delimeter? It could probably mean the length of the pattern, since 1F is 31 and the length of the pattern is 32 steps (2 bars) and it cannot be 0-steps, so it can be 0-based, meaning that if this byte is set to 0, then the length of the pattern is 1 step. But why exactly this same value is used before every track in the pattern? Polyend tracker does not support track of different length in the same pattern (is it something that they wanted to do but did not?) 
 3. (offset 0x1d , dec 29) 768 bytes - track one sequencer steps
    1. 6 bytes per step:
-      1. first 2 bytes is note value, starting from 0 where 0 is C0. FF encodes empty note value.
-      2. next 4 bytes in unknown format (for now)
+      1. first 1 byte is note value, starting from 0 where 0 is C0. FF encodes empty note value.
+      2. next 5 bytes in unknown format (for now)
 4. (offset 0x31D dec 797 ) 1 byte - set to 0x1F (dec 31) by default, no idea yet what it means and seems like a delimeter for next track
 5. (offset 0x31E, dec 798) 768 bytes - track two sequencer steps
    1. same as previous track, frames of 6 bytes per step
@@ -88,7 +88,7 @@ What we still do not know:
 
 1. What exactly is stored in the header of the file (first 27 bytes)
 2. What exactly is encoded in the byte that precedes every track payload (most likely it's the pattern length that is duplicated for all tracks for some reason)
-3. How exactly instrument, fx1 and fx2 types and fx1 and fx2 values are encoded in 4 bytes (we can try to deduce this by checking the minimum and maximimum values of these parameters in the tracker UI)
+3. How exactly instrument, fx1 and fx2 types and fx1 and fx2 values are encoded in 5 bytes, we can assume that 1st byte is insturment number, second is fx1 type, 3rd fx1 value, 4th fx2 type and 5th fx2 value, that would be pretty straightforward. 
 4. What are the last 4 bytes of a document (we can check how checksums are typically caclulated and try to caclulate actual checksums with various popular algos and compare them to the actual values in files.)
 
 ## Comparing pattern files 1 and 5, 6, 7
@@ -141,7 +141,7 @@ the next byte is set to 0x02 instead (0x00 in pattern 1). So it seems, that the 
 
 **Conclusions:**
 
-The manual says: "A maximum number of 48 sample-based Instruments is available." - so we need at least 6 bits to encode instrument number. 6 bits give us a range 0...63 which adds up to 48 sample-based istruments plus 16 midi channels that are also considered to be instruments (e.g. instrument 64 is midi channel 16). 
+The manual says: "A maximum number of 48 sample-based Instruments is available." - so we need at least 6 bits to encode instrument number. 6 bits give us a range 0...63 which adds up to 48 sample-based instruments plus 16 midi channels that are also considered to be instruments (e.g. instrument 64 is midi channel 16). 
 
-So we can assume that 6 first bits after note byte are used for instrument number and we have 2 bits left to represent something (what is there to represent with 4 possible values? There should be something, otherwise Polyend could easily give us 240 instruments + 16 midi channels per file with this file format.)  
+So we can assume that 6 last bits of this byte offset after note byte are used for instrument number and we have 2 bits first left to represent something (what is there to represent with 4 possible values? There should be something, otherwise Polyend could easily give us 240 instruments + 16 midi channels per file with this file format, right?)  
 
