@@ -91,4 +91,30 @@ What we still do not know:
 3. How exactly instrument, fx1 and fx2 types and fx1 and fx2 values are encoded in 4 bytes (we can try to deduce this by checking the minimum and maximimum values of these parameters in the tracker UI)
 4. What are the last 4 bytes of a document (we can check how checksums are typically caclulated and try to caclulate actual checksums with various popular algos and compare them to the actual values in files.)
 
+## Comparing pattern files 1 and 5, 6, 7
+
+Pattern 5 has OFF note step instead of the actual note.
+
+offset 0x1d in pattern 5 file contains FC value.
+
+**Conclusion:**
+
+- "note OFF" is encoded as FC
+
+Pattern 6 file has a CUT note step
+
+offset 0x1d in pattern 6 file contains FD value.
+
+**Conclusion:**
+
+- "Note CUT" is encoded as FD
   
+Pattern 7 file has a FAD (fade) note step
+
+offset 0x1d in pattern 7 file contains FE value.
+
+**Conclusion:**
+
+- "Note CUT" is encoded as FE
+
+
