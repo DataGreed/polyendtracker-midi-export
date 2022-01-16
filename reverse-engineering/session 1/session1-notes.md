@@ -118,3 +118,30 @@ offset 0x1d in pattern 7 file contains FE value.
 - "Note CUT" is encoded as FE
 
 
+## Comparing pattern files 1 and 10
+
+Pattern 1: note c#4 on track 1, instrument 1
+Pattern 10: note c4 on same track with instrument 2
+
+weirdly enough, there are a lot of differences in header and steps here (aside from notes, that are as expected) 
+
+Lets skip this one for now, it could be a result of me trying to paste some date when creating this pattern.
+
+**TODO** 
+
+Revisit pattern 10 from this session (project qqptrns)
+
+## Comparing pattern files 1 and 13 (0x0D)
+
+Pattern 1: note c#4 on track 1, instrument 1
+Pattern 13: note c4 on track 2 with instrument 2
+
+Pattern 13 has 0x30 (C4 note) on offset 0x31e (track 2 sequence payload start)
+the next byte is set to 0x02 instead (0x00 in pattern 1). So it seems, that the next byte (or at least some of its bits) represent a zero-based instrument number.
+
+**Conclusions:**
+
+The manual says: "A maximum number of 48 sample-based Instruments is available." - so we need at least 6 bits to encode instrument number. 6 bits give us a range 0...63 which adds up to 48 sample-based istruments plus 16 midi channels that are also considered to be instruments (e.g. instrument 64 is midi channel 16). 
+
+So we can assume that 6 first bits after note byte are used for instrument number and we have 2 bits left to represent something (what is there to represent with 4 possible values? There should be something, otherwise Polyend could easily give us 240 instruments + 16 midi channels per file with this file format.)  
+
