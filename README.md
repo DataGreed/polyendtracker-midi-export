@@ -1,6 +1,6 @@
 # Polyend Tracker MIDI Export tool
 
-An effor to create a midi conversion tool for Polyend tracker project files. 
+An effort to create a midi conversion tool for Polyend tracker project files. 
 
 ## Disclaimer
 
