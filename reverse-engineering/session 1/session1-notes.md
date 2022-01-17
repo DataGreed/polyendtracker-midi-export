@@ -61,7 +61,7 @@ After these 768 bytes reserved for track 1 we can see there is a byte that (prob
 So the structure of the files seems to go like this:
 
 1. (offset 0 )    27 bytes - header of the file, unknown format (yet)
-2. (offset 0x1e , dec 28) 1 byte set to  1F, seems like some kind of delimeter? It could probably mean the length of the pattern, since 1F is 31 and the length of the pattern is 32 steps (2 bars) and it cannot be 0-steps, so it can be 0-based, meaning that if this byte is set to 0, then the length of the pattern is 1 step. But why exactly this same value is used before every track in the pattern? Polyend tracker does not support track of different length in the same pattern (is it something that they wanted to do but did not?) 
+2. (offset 0x1c , dec 28) 1 byte set to  1F, seems like some kind of delimeter? It could probably mean the length of the pattern, since 1F is 31 and the length of the pattern is 32 steps (2 bars) and it cannot be 0-steps, so it can be 0-based, meaning that if this byte is set to 0, then the length of the pattern is 1 step. But why exactly this same value is used before every track in the pattern? Polyend tracker does not support track of different length in the same pattern (is it something that they wanted to do but did not?) 
 3. (offset 0x1d , dec 29) 768 bytes - track one sequencer steps
    1. 6 bytes per step:
       1. first 1 byte is note value, starting from 0 where 0 is C0. FF encodes empty note value.

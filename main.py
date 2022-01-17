@@ -12,5 +12,11 @@ def print_hi(name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharm')
+    from parsers import patterns
+
+    # todo: remove this and implement tests
+    p = patterns.PatternParser(
+        filename="./reverse-engineering/session 1/project files/datagreed - rebel path tribute 2/patterns/pattern_06.mtp")
+    p.parse()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
