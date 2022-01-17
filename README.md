@@ -9,7 +9,5 @@ I am in no way affiliated with Polyend. This is a hobby project.
 
 ## Reverse Engineering
 
-See 
-
-reverse-engineering/patterns-reverse-engineering.md
+- [Pattern *.mtp files](reverse-engineering/patterns-reverse-engineering.md)
  
