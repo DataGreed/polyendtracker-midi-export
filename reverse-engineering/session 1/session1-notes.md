@@ -39,7 +39,7 @@ Interestingly,  C4 in MIDI is usually 60 and the lowest note is 11. Seems like p
 ### Differences in files:
 
 - Offset 0x1d (dec 29):
-  - pattern 1 - 0x31  (dec 49) - note C4 at step 00, track 1
+  - pattern 1 - 0x31  (dec 49) - note C#4 at step 00, track 1
   - pattern 4 -  0x3C  (dec 60) - note C5, track 1
 - Offset 0x35 (dec 53)
   - pattern 1 - 0xFF (dec 255) - seems to be indication of an empty note step
@@ -202,4 +202,4 @@ To create a more advanced one we'll have to add support for:
 It would be also a good idea to get the numbers for every type of FX.
 
 
-1F is Panning FX with 0 representing -50 (and 0x32 probably representing 0, center)
+1F (dec 31) is Panning FX with 0 representing -50 (and 0x32 probably representing 0, center)
