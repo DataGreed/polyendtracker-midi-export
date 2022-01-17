@@ -8,4 +8,4 @@ Number of files corresponds to number of patterns the project contains. There se
 
 # Pattern File Structure
 
-![dataframes](/Users/datagreed/repos/polyendtracker-midi-export/reverse-engineering/frames.png)
+![dataframes](frames.png)
