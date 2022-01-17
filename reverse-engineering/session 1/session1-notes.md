@@ -169,3 +169,37 @@ Our hunch was right - this number represents the length of the pattern.
 
 Worth noting that every channel has it and its always the same across all channels. Is it some kind of a unimplemented feature Or something reserved for the future? What happens if we manually change some of the values and try loading the pattern in tracker?
 
+## Project qqfx 
+
+### Comparing pattern 5 to pattern 01 from project qqptrns
+
+Seems like byte 5 in step frame represents type of FX1 (and not fx2 for some reason, it would make sense if fx1 type was in bute 3 of the frame, right after the instrument) and byte 6 represents the value.
+
+Volume (velocity) seems to be represented by 0x12 (dec 18), value 100 for velocity is reprented as 0x64  (dec 100 - it's 1-based because volume can be zero).
+
+It also seems like 
+
+### Comparing pattern 5 to pattern 08
+
+This pattern clearly confirms the following structure of the sequence step frame:
+
+
+- byte 1 – note, zero based
+- byte 2 - instrument, zero based
+- byte 3 - type of FX2 (we know that 0x12 is volume/velocity)
+- byte 4 - value of FX2
+- byte 5 - type of FX1 
+- byte 6 - type of FX 1
+
+
+This is enough for us to create a basic parser and exporter to MIDI.
+
+To create a more advanced one we'll have to add support for:
+
+1. Chord FX - this effect basically outputs several notes at once with one instrument
+2. Arpeggio FX - this effect outputs several notes in a sequence with predefined step between them until another step in the track is encountered
+
+It would be also a good idea to get the numbers for every type of FX.
+
+
+1F is Panning FX with 0 representing -50 (and 0x32 probably representing 0, center)
