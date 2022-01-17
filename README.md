@@ -20,6 +20,12 @@ I am in no way affiliated with Polyend. This is a hobby project.
   - basic export
   - support for chord FX
   - support for arp FX
+  - support for microtiming (micromove, `m`) FX
+  - support for microtuning `M` fx (do midi files support that?) 
+  - cli tool for converting files
 - Song arrangement MIDI export
   - export
   - extract BPM
+  - cli tool for converting files
+- PyPi package
+

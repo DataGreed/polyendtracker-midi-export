@@ -16,7 +16,11 @@ if __name__ == '__main__':
 
     # todo: remove this and implement tests
     p = patterns.PatternParser(
+        # NOTE: this file was created with 1.3.1 or older version
         filename="./reverse-engineering/session 1/project files/datagreed - rebel path tribute 2/patterns/pattern_06.mtp")
-    p.parse()
+    parsed_pattern = p.parse()
+
+    print(parsed_pattern)
+
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

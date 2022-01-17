@@ -115,7 +115,7 @@ offset 0x1d in pattern 7 file contains FE value.
 
 **Conclusion:**
 
-- "Note CUT" is encoded as FE
+- "Note FAD" is encoded as FE
 
 
 ## Comparing pattern files 1 and 10
