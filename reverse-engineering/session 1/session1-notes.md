@@ -145,3 +145,27 @@ The manual says: "A maximum number of 48 sample-based Instruments is available."
 
 So we can assume that 6 last bits of this byte offset after note byte are used for instrument number and we have 2 bits first left to represent something (what is there to represent with 4 possible values? There should be something, otherwise Polyend could easily give us 240 instruments + 16 midi channels per file with this file format, right?)  
 
+## Comparing pattern files 1 and 18 (0x12)
+
+Pattern 1: note c#4 on track 1, instrument 1, pattern length is 32 steps
+Pattern 18: note c4 on track 1 with instrument 3, pattern length is 5 steps
+
+for some reason there are a lot of differences between these files, similar case to pattern 10
+
+**TODO**
+
+Revisit this file
+
+## Comparing pattern files 1 and 19 (0x13)
+
+Pattern 1: note c#4 on track 1, instrument 1, pattern length is 32 steps
+Pattern 19: note c4 on track 1 with instrument 3, pattern length is 6 steps
+
+Every byte that goes before actual steps data in pattern 19 is set to 0x05 (dec 5) instead of 0x1F (31) in pattern 1
+
+**Conclusion**
+
+Our hunch was right - this number represents the length of the pattern.
+
+Worth noting that every channel has it and its always the same across all channels. Is it some kind of a unimplemented feature Or something reserved for the future? What happens if we manually change some of the values and try loading the pattern in tracker?
+
