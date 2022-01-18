@@ -50,6 +50,6 @@ You can see an example of pattern text representation [here](./reverse-engineeri
 - Song arrangement MIDI export
   - export
   - extract BPM
-  - cli tool for converting files
+  - cli tool for converting files 
 - PyPi package
 
