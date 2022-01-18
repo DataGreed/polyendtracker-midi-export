@@ -250,7 +250,9 @@ class Pattern:
 
 
 class PatternParser:
-
+    """
+    Parser for Polyend Tracker pattern *.mtp filtes
+    """
     def __init__(self, filename: str):
 
         self.filename = filename
