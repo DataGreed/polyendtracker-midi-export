@@ -65,7 +65,6 @@ class PatternToMidiExporter:
         # this maps allows us to quickly find midi track for given instrument
         # this should be faster than calling instruments.indexOf()
         instrument_to_midi_track_map = {}
-        last_processed_step_by_instrument = {}
 
         midi_file = MIDIFile(midi_tracks_count)
         midi_file.addTempo(track=0, time=0, tempo=self.tempo_bpm)
@@ -86,59 +85,58 @@ class PatternToMidiExporter:
                     continue
 
                 if step.note.is_off_fad_or_cut():
-                    # this is a hack as midi utils try to set note off events automatically
-                    try:
-                        note_to_disable = last_processed_step_by_instrument[step.instrument_number].note
-                    except KeyError:
-                        # note off events in tracker can be before actual note
-                        # this is typically useful for arrangement of several
-                        # sequential patterns
-                        # FIXME: handle this case when implementing rendering of a song with several patterns
-                        pass
-                    else:
-
-                        midi_track_number = instrument_to_midi_track_map[step.instrument_number]
-                        if midi_file.header.numeric_format == 1:
-                            midi_track_number += 1
-                        midi_track = midi_file.tracks[midi_track_number]
-
-                        midi_track.eventList.append(
-                            NoteOff(channel=channel,
-                                    pitch=PatternToMidiExporter.get_midi_note_value(note_to_disable),
-                                    tick=midi_file.time_to_ticks(step_number*PatternToMidiExporter.MIDI_16TH_NOTE_TIME_VALUE),
-                                    # fixme: should volume be the same as of note from last step?
-                                    volume=default_volume
-                                    )
-                        )
+                    # adding note off event is complicated, it's easier to rely on duration
+                    # argument for addNote
+                    continue
 
                 else:
 
                     # we've got a note
+                    # check when the next note or NOTE OFF appears on this track
+                    # so we can calculate note duration
+                    duration = default_duration
+
+                    note_end_position = None
+
+                    for inner_step_number in range(step_number+1, track.length):
+                        inner_step = track.steps[inner_step_number]
+                        if inner_step.note.is_off_fad_or_cut():
+                            # found note break
+                            note_end_position = inner_step_number
+                            break
+                        if not inner_step.note.is_empty():
+                            # found next note - time to disable this one
+                            note_end_position = inner_step_number
+                            break
+
+                    # if we haven't found anything, we'll just disable the note at
+                    # the end of the pattern
+                    if not note_end_position:
+                        # make sure we disable the note after pattern ends and not at
+                        # the last step of the pattern
+                        note_end_position = track.length
+
+                    duration = (note_end_position - step_number) * PatternToMidiExporter.MIDI_16TH_NOTE_TIME_VALUE
+
+
                     # TODO: add support for chord fx
                     # TODO: add support for arp fx
                     midi_file.addNote(track=instrument_to_midi_track_map[step.instrument_number],
                                       channel=channel,
                                       pitch=PatternToMidiExporter.get_midi_note_value(step.note),
                                       time=step_number*PatternToMidiExporter.MIDI_16TH_NOTE_TIME_VALUE,
-                                      duration=default_duration,   # does not matter as we will delete note off event,
+                                      duration=duration,   # does not matter as we will delete note off event,
                                       # TODO: write velocity fx value if set (needs to be converted to 0...127!!!)
                                       volume=default_volume,
                                       )
 
-                    # delete note off event as we add it ourselves
-                    # (this is not documented, but seems to be a safe way to do it)
-                    midi_track_number = instrument_to_midi_track_map[step.instrument_number]
-                    if midi_file.header.numeric_format == 1:
-                        midi_track_number += 1
-                    midi_track = midi_file.tracks[midi_track_number]
-                    midi_track.eventList.pop()
 
-                    # add this so we can handle note off events properly
-                    # as they require you to tell which note you would
-                    # like to stop playing
-                    last_processed_step_by_instrument[step.instrument_number]=step
+
 
                     # fixme: should we add note off at the last step for all instruments?
+            # track iteration ended
+            # turn off any notes on this track that were not explicitly turned off
+            # FIXME: if a
 
 
 
