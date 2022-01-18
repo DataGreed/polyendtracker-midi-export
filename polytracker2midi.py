@@ -49,7 +49,7 @@ def main():
     p = patterns.PatternParser(filename=input_filename)
     parsed_pattern = p.parse()
 
-    print(parsed_pattern.render_as_table())
+    # print(parsed_pattern.render_as_table())
 
     midi_exporter = midi.PatternToMidiExporter(pattern=parsed_pattern)
     midi_exporter.write_midi_file(output_filename)
