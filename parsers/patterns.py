@@ -2,7 +2,7 @@
 # TODO: enums for fx types
 import math
 from enum import Enum
-from typing import List
+from typing import List, Union
 
 
 class EffectType(Enum):
@@ -11,27 +11,44 @@ class EffectType(Enum):
     # todo: add all effect types
 
     def short_name(self):
-        return EFFECT_SHORT_NAMES[self]
+        try:
+            return EFFECT_SHORT_NAMES[self.value]
+        except AttributeError:
+            return EFFECT_SHORT_NAMES[self]
 
 
 # short names the way they are represented in tracker UI
 EFFECT_SHORT_NAMES = {
-    EffectType.volume: "V",
-    EffectType.panning: "P",
+    EffectType.volume.value: "V",
+    EffectType.panning.value: "P",
     # todo: add all effect types
 }
 
 
 class Effect:
-    def __init__(self, fx_type: int, fx_value: int):
+    def __init__(self, fx_type: Union[int, EffectType], fx_value: int):
         self.type = fx_type
         self.value = fx_value
 
         # todo: write down all effect types in a enum and check range of values for each of them
         #  so we we can have a human-readable version
 
+    def get_name(self):
+        try:
+            return EffectType.short_name(self.type)
+        except KeyError:
+            # for effects that has not been yet mapped out and for future compatibility
+            # in case new effects will be added
+            return str(self.type)
+
+    def render(self, hide_value_if_no_type_set=True):
+        # tracker stores fx values even for deleted effects.
+        # TODO: use names when we have all effect names mapped out in EffectType enum
+        return f"{self.get_name() if self.type else '--'}".rjust(3) + f"{self.value if self.type else '---'}".rjust(4)
+
     def __str__(self):
-        return f"{self.type} {self.value}"
+
+        return self.render(hide_value_if_no_type_set=False)
 
 
 
@@ -95,6 +112,10 @@ class Step:
 
         # todo: make sure this string has constant length so we can print pretty tables
         return f"{self.note} inst {self.instrument_number} fx1 {self.fx1} fx2 {self.fx2}"
+
+    def render_as_table_cell(self):
+
+        return f"{self.note}".rjust(3) +f"{self.instrument_number or '--'}".rjust(3) + f"{self.fx1} {self.fx2}"
 
     @staticmethod
     def from_bytes(data: bytes):
@@ -175,6 +196,26 @@ class Pattern:
             i+=1
 
         return result
+
+    def render_as_table(self):
+        """
+        Prints pattern tracks vertically in a similar
+        way the actual tracker does it
+        :return:
+        """
+        result = []
+
+        header_items = [f"Track {x+1}".center(21) for x in range(Pattern.NUMBER_OF_TRACKS)]
+        result.append(" | ".join(header_items) + " ")
+
+        for i in range(self.tracks[0].length):  # all track lengths are the same as of firmware 1.5
+            line_data = []
+            for track in self.tracks:
+                line_data.append(str(track.steps[i].render_as_table_cell()))
+
+            result.append(" | ".join(line_data) + " ")
+
+        return str("\n".join(result))
 
 
     @staticmethod
