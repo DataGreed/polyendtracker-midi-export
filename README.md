@@ -13,9 +13,9 @@ I am in no way affiliated with Polyend. This is a hobby project.
  
 ## TODOs
 
-- Pattern file parsing
-- List All FX types 
-- List all possible ranges of values for FXs
+- ~~Pattern file parsing~~
+- Render names for All FX types 
+- Support rendering of all possible ranges of values for FXs
 - Pattern MIDI export
   - basic export
   - support for chord FX
