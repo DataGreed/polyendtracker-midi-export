@@ -61,6 +61,7 @@ class Note:
     EMPTY_VALUE = 0xFF
 
     INAUDIBLE_VALUES = (OFF_VALUE, CUT_VALUE, FADE_VALUE, EMPTY_VALUE)
+    NOTE_DISABLING_VALUES = (OFF_VALUE, CUT_VALUE, FADE_VALUE)
 
     # note names in the order they appear in octave in notation
     NOTE_NAMES = ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
@@ -86,7 +87,7 @@ class Note:
         return self.value == Note.EMPTY_VALUE
 
     def is_off_fad_or_cut(self):
-        return self.value in Note.INAUDIBLE_VALUES
+        return self.value in Note.NOTE_DISABLING_VALUES
 
     def __str__(self):
         if self.value in Note.INAUDIBLE_VALUES:

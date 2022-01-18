@@ -71,7 +71,7 @@ class PatternToMidiExporter:
 
         for i in range(len(instruments)):
             # todo: get actual track names from project file (or are they stored in instrument files?)
-            midi_file.addTrackName(track=0, time=0, trackName=f"Instrument {instruments[i]}")
+            midi_file.addTrackName(track=i, time=0, trackName=f"Instrument {instruments[i]}")
 
             instrument_to_midi_track_map[instruments[i]] = i
 
@@ -94,10 +94,10 @@ class PatternToMidiExporter:
                     # we've got a note
                     # check when the next note or NOTE OFF appears on this track
                     # so we can calculate note duration
-                    duration = default_duration
-
                     note_end_position = None
 
+                    # iterate the track from the next step till the end
+                    # until we encounter a note
                     for inner_step_number in range(step_number+1, track.length):
                         inner_step = track.steps[inner_step_number]
                         if inner_step.note.is_off_fad_or_cut():
@@ -129,19 +129,6 @@ class PatternToMidiExporter:
                                       # TODO: write velocity fx value if set (needs to be converted to 0...127!!!)
                                       volume=default_volume,
                                       )
-
-
-
-
-                    # fixme: should we add note off at the last step for all instruments?
-            # track iteration ended
-            # turn off any notes on this track that were not explicitly turned off
-            # FIXME: if a
-
-
-
-        # for i, pitch in enumerate(degrees):
-        #     midi_file.addNote(track, channel, pitch, time + i, default_duration, default_volume)
 
         return midi_file
 
