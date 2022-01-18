@@ -81,6 +81,13 @@ class Note:
         elif value == Note.CUT_VALUE:
             self.name = "CUT"
 
+    def is_empty(self):
+
+        return self.value == Note.EMPTY_VALUE
+
+    def is_off_fad_or_cut(self):
+        return self.value in Note.INAUDIBLE_VALUES
+
     def __str__(self):
         if self.value in Note.INAUDIBLE_VALUES:
             return self.name
