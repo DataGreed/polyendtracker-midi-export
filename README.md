@@ -6,6 +6,28 @@ An effort to create a midi conversion tool for Polyend tracker project files.
 
 I am in no way affiliated with Polyend. This is a hobby project.
 
+## Usage
+
+Converting Polyend Tracker `*.mtp` pattern file to midi (pattern files are nested in project folders under `patterns`):
+
+```sh
+:$ python polytracker2midi.py ./my-tracker-project/patterns/pattern_02.mtp 
+```
+
+Specify custom output file name:
+
+```sh
+:$ python polytracker2midi.py ./my-tracker-project/patterns/pattern_02.mtp ./my-midi-file.mid
+```
+
+Converting Polyend Tracker `*.mtp` pattern file to a text file (outputs a table view of the 
+pattern similar to how you see it in Tracker UI):
+
+```sh
+:$ python polytracker2text.py ./my-tracker-project/patterns/pattern_02.mtp 
+```
+
+You can see an example of pattern text representation [here](./reverse-engineering/session%201/project%20files/datagreed%20-%20rebel%20path%20tribute%202/patterns/pattern_01.txt)
 
 ## Reverse Engineering
 
