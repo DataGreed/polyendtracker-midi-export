@@ -6,18 +6,24 @@ MIDI conversion tool for Polyend Tracker project files.
 
 I am in no way affiliated with Polyend. This is a hobby project.
 
+## Installation 
+
+```sh
+pip install polyendtracker-midi-export
+```
+
 ## Usage
 
 Converting Polyend Tracker `*.mtp` pattern file to midi (pattern files are nested in project folders under `patterns`):
 
 ```sh
-:$ python polytracker2midi.py ./my-tracker-project/patterns/pattern_02.mtp 
+$ polymidiexport ./my-tracker-project/patterns/pattern_02.mtp 
 ```
 
-Specify custom output file name:
+Specifying custom output file name:
 
 ```sh
-:$ python polytracker2midi.py ./my-tracker-project/patterns/pattern_02.mtp ./my-midi-file.mid
+$ polymidiexport ./my-tracker-project/patterns/pattern_02.mtp ./my-midi-file.mid
 ```
 
 Converting Polyend Tracker `*.mtp` pattern file to a text file (outputs a table view of the 
@@ -51,5 +57,5 @@ You can see an example of pattern text representation [here](./reverse-engineeri
   - export
   - extract BPM
   - cli tool for converting files 
-- PyPi package
+- ~~PyPi package~~
 
