@@ -9,7 +9,7 @@ setup(
     author = 'Alexey Strelkov',
     author_email = 'datagreed@gmail.com',
     license = 'MIT License',
-    description = 'Unoficial tool that converts Polyend Tracker *.mtp pattern files to midi files.',
+    description = 'Unofficial tool that converts Polyend Tracker *.mtp pattern files to midi files.',
     long_description = long_description,
     long_description_content_type = "text/markdown",
     url = 'https://github.com/DataGreed/polyendtracker-midi-export',
