@@ -40,11 +40,11 @@ def main():
         pass
 
     if not os.path.isfile(input_filename):
-        print(f"{input_filename} does not exist")
+        print(f"File {input_filename} does not exist")
         sys.exit(1)
 
     if os.path.isfile(output_filename):
-        print(f"{output_filename} already exists - will overwrite")
+        print(f"File {output_filename} already exists - will overwrite")
 
     p = patterns.PatternParser(filename=input_filename)
     parsed_pattern = p.parse()
