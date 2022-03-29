@@ -91,50 +91,86 @@ SUPPORTED_CHORD_TYPES = [
     ChordType("48", "AugTriad", 6, [0, 4, 8]),
     # Sus4 – 057
     ChordType("57", "Sus4", 7, [0, 5, 7]),
-    # Stack4 – 05A
-    ChordType("", "", 8, []),   # todo: add chord values
+
+    # Stack4 – 05A - modal quant chord? not quite sure
+    # todo: make sure that intervals are correct
+    ChordType("5A", "Stack4", 8, [0, 5, 10]),   # does tracker send 3 notes or 4? 4th would be 15
+
     # Open4 – 05C
-    ChordType("", "", 9, []),   # todo: add chord values
-    #Sus #4 – 067
+    # todo: do they mean perfect 4th? or is it something else?
+    ChordType("", "", 9, [0, 5]),
+
+    # Sus #4 – 067
     ChordType("67", "Sus #4", 10, [0, 6, 7]),
+
     # Open5 – 07C
-    ChordType("", "", 11, []),   # todo: add chord values
+    # todo: do they mean power chord? or is it something else
+    ChordType("07C", "Open5", 11, [0, 7]),
+
     # Stack5 – 07E
-    ChordType("", "", 12, []),   # todo: add chord values
+    # todo: make sure that intervals are correct
+    ChordType("07", "Stack5", 12, [0, 7, 14]),
+
     # Sus2add6 – 0279
     ChordType("279", "Sus2add6", 13, [0, 2, 7, 9]),
+
     # Sus2 b7 – 027A
-    ChordType("", "", 14, []),   # todo: add chord values
+    # todo: make sure intervals are correct, they were deduced
+    ChordType("27A", "Sus2 b7", 14, [0, 2, 7, 10]),
+
     # Sus2Maj7 – 027B
-    ChordType("", "", 15, []),   # todo: add chord values
+    # todo: make sure intervals are correct, they were deduced
+    ChordType("27B", "Sus2Maj7", 15, [0, 2, 7, 11]),
+
     # Dim7 – 0369
     ChordType("369", "Dim7", 16, [0, 3, 6, 9]),
+
     # HalfDim – 036A
-    ChordType("", "", 17, []),   # todo: add chord values
+    # see https://en.wikipedia.org/wiki/Half-diminished_seventh_chord
+    ChordType("36A", "HalfDim", 17, [0, 3, 6, 10]),
+
     # Min b6 – 0378
     ChordType("378", "Min b6", 18, [0, 3, 7, 8]),
     # Min6 – 0379
     ChordType("379", "Min6", 19, [0, 3, 7, 9]),
+
     # Min7 – 037A
-    ChordType("", "", 20, []),   # todo: add chord values
+    # see https://en.wikipedia.org/wiki/Minor_seventh_chord
+    ChordType("37A", "Min7", 20, [0, 3, 7, 10]),
+
     # MinMaj7 – 037B
-    ChordType("", "", 21, []),   # todo: add chord values
+    # see https://en.wikipedia.org/wiki/Minor_major_seventh_chord
+    ChordType("37B", "MinMaj7", 21, [0, 3, 7, 11]),
+
     # Maj6 – 0479
     ChordType("479", "Maj6", 22, [0, 4, 7, 9]),
+
     # Dom7 – 047A
-    ChordType("", "", 23, []),   # todo: add chord values
+    # see https://en.wikipedia.org/wiki/Dominant_seventh_chord
+    ChordType("47A", "Dom7", 23, [0, 4, 7, 10]),
+
     # Maj7 – 047B
-    ChordType("", "", 24, []),   # todo: add chord values
+    # see https://en.wikipedia.org/wiki/Major_seventh_chord
+    ChordType("47B", "Maj7", 24, [0, 4, 7, 11]),
+
     # Aug add6 – 0489
     ChordType("489", "Aug add6", 25, [0, 4, 8, 9]),
+
     # Aug b7 – 048A
-    ChordType("", "", 26, []),   # todo: add chord values
+    # todo: make sure this is correct, as the intervals are deduced from chord name
+    ChordType("48A", "Aug b7", 26, [0, 4, 8, 10]),
+
     # AugMaj7 – 048B
-    ChordType("", "", 27, []),   # todo: add chord values
+    # see https://en.wikipedia.org/wiki/Augmented_major_seventh_chord
+    ChordType("48B", "AugMaj7", 27, [0, 4, 8, 11]),
+
     # Sus4 b7 – 057A
-    ChordType("", "", 28, []),   # todo: add chord values
+    # todo: make sure this is correct, I am not sure about the last interval
+    ChordType("57A", "Sus4 b7", 28, [0, 5, 7, 10]),
+
     # Sus4Maj7 – 057B
-    ChordType("", "", 29, []),   # todo: add chord values
+# todo: make sure this is correct, I am not sure about the last interval
+    ChordType("57B", "Sus4Maj7", 29, [0, 5, 7, 11]),   # todo: add chord values
 ]
 # todo: map via comprehension
 # CHORD_TYPES_BY_VALUE
