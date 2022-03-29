@@ -45,20 +45,35 @@ class Chord:
 
     @property
     def fx_value(self) -> int:
+        try:
+            return CHORD_TYPES_BY_INTERVAL_TUPLE[tuple(self.intervals)].value
+        except KeyError as e:
+            raise ValueError(f"ChordType with intervals {tuple(self.intervals)} "
+                             f"not found in SUPPORTED_CHORDS. "
+                             f"Original exception follows: {e}")
 
-        pass
+    @property
+    def chord_type(self) -> int:
+        try:
+            return CHORD_TYPES_BY_INTERVAL_TUPLE[tuple(self.intervals)]
+        except KeyError as e:
+            raise ValueError(f"ChordType with intervals {tuple(self.intervals)} "
+                             f"not found in SUPPORTED_CHORDS. "
+                             f"Original exception follows: {e}")
 
     @classmethod
-    def create_from_fx_value(cls, note:Note, fx_value: int):
+    def create_from_fx_value(cls, root_note:Note, fx_value: int):
         """
         Creates a chord object from the actual value
         stored in a step of tracker pattern file (*.mtp)
-        :param chord_fx_value:
+        :param fx_value: value of chord fx from tracker pattern file
+        :param root_note: Note object, root (base) note of the chord
         :return:
         """
-        raise NotImplementedError('not yet implemented')
-        pass
+        return CHORD_TYPES_BY_VALUE[fx_value].get_chord(root_note=root_note)
 
+    def __str__(self):
+        return f"{self.root_note} {self.fx_value}"
 
 
 class ChordType:
@@ -74,6 +89,9 @@ class ChordType:
         Constructs a Chord object for given root note
         """
         return Chord(root_note=root_note, intervals=self.intervals)
+
+    def __str__(self):
+        return f"{self.display_name}"
 
 
 SUPPORTED_CHORD_TYPES = [
@@ -169,10 +187,11 @@ SUPPORTED_CHORD_TYPES = [
     ChordType("57A", "Sus4 b7", 28, [0, 5, 7, 10]),
 
     # Sus4Maj7 – 057B
-# todo: make sure this is correct, I am not sure about the last interval
+    # todo: make sure this is correct, I am not sure about the last interval
     ChordType("57B", "Sus4Maj7", 29, [0, 5, 7, 11]),   # todo: add chord values
 ]
-# todo: map via comprehension
-# CHORD_TYPES_BY_VALUE
-# CHORD_TYPES_BY_DISPLAY_NAME
+# mapping tracker value: chord object
+CHORD_TYPES_BY_VALUE = {item.value: item for item in SUPPORTED_CHORD_TYPES}
 
+# chord mapping by interval tuple (tuple, not list, as lists are not hashable)
+CHORD_TYPES_BY_INTERVAL_TUPLE = {tuple(item.intervals): item for item in SUPPORTED_CHORD_TYPES}
