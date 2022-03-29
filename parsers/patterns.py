@@ -24,6 +24,8 @@ class EffectType(Enum):
 EFFECT_SHORT_NAMES = {
     EffectType.volume.value: "V",
     EffectType.panning.value: "P",
+    EffectType.chord.value: "Ch",
+    EffectType.arp.value: "Ar",
     # todo: add all effect types
 }
 
