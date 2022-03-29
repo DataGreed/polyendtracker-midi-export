@@ -32,11 +32,33 @@ EFFECT_SHORT_NAMES = {
 
 class Effect:
     def __init__(self, fx_type: Union[int, EffectType], fx_value: int):
-        self.type = fx_type
+
+        self.type = fx_type  # todo: ditch this ambiguous field. Use type_value and type_obj instead
         self.value = fx_value
 
+        # declare type_value and type_obj depending on the type of fx_type
+        # (it can be value from tracker pattern file or actual EffectType enum value)
+        if isinstance(fx_type, int):
+
+            self.type_value = fx_type
+            try:
+                self.type_obj = EffectType(self.type_value)
+            except ValueError as e:
+                # that's okay for now as we don't have all of the fx types described
+                # todo: describe all effect types in EffectType enum
+                self.type_obj = None
+
+        elif isinstance(fx_type, EffectType):
+            self.type_obj = fx_type
+            self.type_value = fx_type.value
+
+        else:
+            raise ValueError(f"fx_type must be int or EffectType, got {type(fx_type)} instead")
+
         # todo: write down all effect types in a enum and check range of values for each of them
-        #  so we we can have a human-readable version
+        #  so we we can have a human-readable version.
+        # todo: ditch the Union[int, EffectType] when all effects will be described and separate
+        # effect type value and actual object type in different variable
 
     def get_name(self):
         try:
@@ -46,10 +68,29 @@ class Effect:
             # in case new effects will be added
             return str(self.type)
 
+    def get_chord_type(self):
+        if self.type_obj == EffectType.chord and self.value:
+            from . import chords
+            chord_type = chords.ChordType.get_by_fx_value(self.value)
+
+            return chord_type
+        return None
+
+    def get_value_display(self):
+
+        # handle special cases for rendering values
+        if self.type_obj == EffectType.chord:
+            # print("ENCOUNTERED CHORD")
+            if self.value:
+                chord_type = self.get_chord_type()
+                return chord_type.render()
+
+        return self.value
+
     def render(self, hide_value_if_no_type_set=True):
         # tracker stores fx values even for deleted effects.
         # TODO: use names when we have all effect names mapped out in EffectType enum
-        return f"{self.get_name() if self.type else '--'}".rjust(3) + f"{self.value if self.type else '---'}".rjust(4)
+        return f"{self.get_name() if self.type else '--'}".rjust(3) + f"{self.get_value_display() if self.type else '---'}".rjust(4)
 
     def __str__(self):
 

@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import List
 
 from parsers.patterns import Note
@@ -53,7 +54,7 @@ class Chord:
                              f"Original exception follows: {e}")
 
     @property
-    def chord_type(self) -> int:
+    def chord_type(self) -> "ChordType":
         try:
             return CHORD_TYPES_BY_INTERVAL_TUPLE[tuple(self.intervals)]
         except KeyError as e:
@@ -62,7 +63,7 @@ class Chord:
                              f"Original exception follows: {e}")
 
     @classmethod
-    def create_from_fx_value(cls, root_note:Note, fx_value: int):
+    def create_from_fx_value(cls, root_note:Note, fx_value: int) -> "Chord":
         """
         Creates a chord object from the actual value
         stored in a step of tracker pattern file (*.mtp)
@@ -84,13 +85,24 @@ class ChordType:
         self.value = value
         self.intervals = intervals
 
-    def get_chord(self, root_note: Note):
+    def get_chord(self, root_note: Note) -> Chord:
         """
         Constructs a Chord object for given root note
         """
         return Chord(root_note=root_note, intervals=self.intervals)
 
+    # @classmethod
+    # def create_from_fx_value(cls, fx_value: int):
+    #     return deepcopy(CHORD_TYPES_BY_VALUE[fx_value])
+
+    @classmethod
+    def get_by_fx_value(cls, fx_value: int) -> "ChordType":
+        return CHORD_TYPES_BY_VALUE[fx_value]
+
     def __str__(self):
+        return self.render()
+
+    def render(self):
         return f"{self.display_name}"
 
 
@@ -116,7 +128,7 @@ SUPPORTED_CHORD_TYPES = [
 
     # Open4 – 05C
     # todo: do they mean perfect 4th? or is it something else?
-    ChordType("", "", 9, [0, 5]),
+    ChordType("5C", "Open4", 9, [0, 5]),
 
     # Sus #4 – 067
     ChordType("67", "Sus #4", 10, [0, 6, 7]),
