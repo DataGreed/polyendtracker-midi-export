@@ -8,6 +8,9 @@ from typing import List, Union
 class EffectType(Enum):
     volume = 0x12
     panning = 0x1F
+    chord = 0xE  # dec 14
+    arp = 0x15   # dec 21    # arpeggio works only with chord fx at the same step
+
     # todo: add all effect types
 
     def short_name(self):
