@@ -76,6 +76,14 @@ class Effect:
             return chord_type
         return None
 
+    def get_arp_type(self):
+        if self.type_obj == EffectType.arp and self.value:
+            from . import arps
+            arp_type = arps.ArpType.get_by_fx_value(self.value)
+
+            return arp_type
+        return None
+
     def get_value_display(self):
 
         # handle special cases for rendering values
@@ -84,6 +92,11 @@ class Effect:
             if self.value:
                 chord_type = self.get_chord_type()
                 return chord_type.render()
+
+        elif self.type_obj == EffectType.arp:
+            if self.value:
+                arp_type = self.get_arp_type()
+                return arp_type.render()
 
         return self.value
 
@@ -184,7 +197,7 @@ class Step:
 
     def get_chord(self):
         """
-        Returns chord of this step has chord fx. Returns None of not.
+        Returns chord of this step has chord fx. Returns None if not.
         If step has 2 chord effects, returns the first one
         (this case should not be valid - not sure how tracker even handles this)
         """
@@ -195,8 +208,22 @@ class Step:
         return None
 
     def get_arp(self):
-        # todo: implement
-        raise NotImplementedError()
+        """
+        Returns arp if this step has arp fx at any effect slot. Returns None if not.
+        Note: this will return arp only if
+        the same step has chord fx (because arp fx doesn't make sense without chord fx
+        and just won't work without chord fx set on the same step really).
+
+        Arp needs chord to be initialized, so it can't be returned without chord anyway
+        :return:
+        """
+        arp_type = self.fx1.get_arp_type() or self.fx2.get_arp_type()
+        if arp_type:
+            chord = self.get_chord()
+            if not chord:
+                return None
+            return arp_type.get_arp(chord)
+        return None
 
 
 class Track:
