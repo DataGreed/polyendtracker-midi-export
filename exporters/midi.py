@@ -71,6 +71,7 @@ class PatternToMidiExporter:
 
         for i in range(len(instruments)):
             # todo: get actual track names from project file (or are they stored in instrument files?)
+            # todo: instrument 48 is midi instrument 1 the next 15 are also midi instruments - set their names
             midi_file.addTrackName(track=i, time=0, trackName=f"Instrument {instruments[i]}")
 
             instrument_to_midi_track_map[instruments[i]] = i
@@ -121,14 +122,30 @@ class PatternToMidiExporter:
 
                     # TODO: add support for chord fx
                     # TODO: add support for arp fx
-                    midi_file.addNote(track=instrument_to_midi_track_map[step.instrument_number],
-                                      channel=channel,
-                                      pitch=PatternToMidiExporter.get_midi_note_value(step.note),
-                                      time=step_number*PatternToMidiExporter.MIDI_16TH_NOTE_TIME_VALUE,
-                                      duration=duration,   # does not matter as we will delete note off event,
-                                      # TODO: write velocity fx value if set (needs to be converted to 0...127!!!)
-                                      volume=default_volume,
-                                      )
+
+                    if step.get_chord():
+                        chord = step.get_chord()
+                        for note in chord.notes:
+                            # TODO: make this DRY as this differs from default case with one note just by one argument
+                            midi_file.addNote(track=instrument_to_midi_track_map[step.instrument_number],
+                                              channel=channel,
+                                              pitch=PatternToMidiExporter.get_midi_note_value(note),
+                                              time=step_number * PatternToMidiExporter.MIDI_16TH_NOTE_TIME_VALUE,
+                                              duration=duration,  # does not matter as we will delete note off event,
+                                              # TODO: write velocity fx value if set (needs to be converted to 0...127!!!)
+                                              volume=default_volume,
+                                              )
+
+                    else:
+                        # default case - just a regular note playing
+                        midi_file.addNote(track=instrument_to_midi_track_map[step.instrument_number],
+                                          channel=channel,
+                                          pitch=PatternToMidiExporter.get_midi_note_value(step.note),
+                                          time=step_number*PatternToMidiExporter.MIDI_16TH_NOTE_TIME_VALUE,
+                                          duration=duration,   # does not matter as we will delete note off event,
+                                          # TODO: write velocity fx value if set (needs to be converted to 0...127!!!)
+                                          volume=default_volume,
+                                          )
 
         return midi_file
 

@@ -182,6 +182,22 @@ class Step:
                     fx1=Effect(fx_type=data[Step.FX1_TYPE_OFFSET], fx_value=data[Step.FX1_VALUE_OFFSET]),
                     fx2=Effect(fx_type=data[Step.FX2_TYPE_OFFSET], fx_value=data[Step.FX2_VALUE_OFFSET]))
 
+    def get_chord(self):
+        """
+        Returns chord of this step has chord fx. Returns None of not.
+        If step has 2 chord effects, returns the first one
+        (this case should not be valid - not sure how tracker even handles this)
+        """
+
+        chord_type = self.fx1.get_chord_type() or self.fx2.get_chord_type()
+        if chord_type:
+            return chord_type.get_chord(self.note)
+        return None
+
+    def get_arp(self):
+        # todo: implement
+        raise NotImplementedError()
+
 
 class Track:
 
