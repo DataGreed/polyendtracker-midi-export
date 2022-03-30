@@ -1,9 +1,9 @@
-
 # TODO: enums for fx types
 import math
 from enum import Enum
 from typing import List, Union
 
+__author__ = "Alexey 'DataGreed' Strelkov"
 
 class EffectType(Enum):
     volume = 0x12

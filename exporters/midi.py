@@ -21,7 +21,7 @@ class PatternToMidiExporter:
         self.tempo_bpm = tempo_bpm
 
     def get_list_of_instruments(self):
-
+        # todo: for songs get instrument names from instrument files (or filenames)
         instruments = set()
 
         for track in self.pattern.tracks:
