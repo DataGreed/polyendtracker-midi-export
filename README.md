@@ -47,7 +47,8 @@ You can see an example of pattern text representation [here](./reverse-engineeri
 - Pattern MIDI export
   - ~~basic export~~
   - support for velocity (volume FX)
-  - support for chord FX
+  - ~~support for chord FX~~
+    - make sure that all chord interval formulas are correct 
   - support for arp FX
   - support for microtiming (micromove, `m`) FX
   - support for microtuning `M` fx (do midi files support that?) 
@@ -57,6 +58,7 @@ You can see an example of pattern text representation [here](./reverse-engineeri
   - export
   - extract BPM
   - cli tool for converting files 
+  - assign instrument names to midi tracks from instrument project files
 - ~~PyPi package~~
 - conversion web service
 

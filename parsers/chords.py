@@ -107,6 +107,8 @@ class ChordType:
 
 
 SUPPORTED_CHORD_TYPES = [
+    # todo: handle disabled chord with value 0 somehow
+
     # Sus2 – 027
     ChordType("27", "Sus2", 1, [0, 2, 7]),
     # Sus2 #5 – 028
