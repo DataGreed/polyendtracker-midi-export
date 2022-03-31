@@ -16,7 +16,7 @@ class Song:
     """Maximum length of a song in patterns."""
     MAXIMUM_SLOTS_PER_SONG = 255  # from docs
 
-    def __init__(self, pattern_chain: List[int], pattern_mapping: Dict[int:Pattern]):
+    def __init__(self, pattern_chain: List[int], pattern_mapping: Dict[int, Pattern]):
         """
 
         :param pattern_chain: a list of ints representing the order of patterns in the song.
@@ -29,6 +29,14 @@ class Song:
                              f"but {len(pattern_chain)} pattern long song received")
         self.pattern_mapping = pattern_mapping
         self.pattern_chain = pattern_chain
+
+        # integrity check
+        for i in set(pattern_chain):
+            if i not in pattern_mapping.keys():
+                raise ValueError(f"Song initialization: pattern_chain has value "
+                                 f"{i}, but there is no such pattern in pattern_mapping. "
+                                 f"Context: pattern_chain: {pattern_chain}; "
+                                 f"pattern_mapping: {pattern_mapping}")
 
     def get_song_as_patterns(self) -> List[Pattern]:
         """Returns song as a list of patterns ordered. Play them in
@@ -55,13 +63,13 @@ class Project:
     OFFSET_START = 0
 
     PATTERN_CHAIN_OFFSET = 0x10
-    PATTERN_CHAIN_END = 0x110   # length is 256 bytes (shouldnt it be 255 according to docs?)
+    PATTERN_CHAIN_END = 0x10f   # length is 255 bytes
 
     # BPM_OFFSET_START =
     # BPM_OFFSET_END =
 
     @staticmethod
-    def from_bytes(data: bytes, patterns_bytes=Dict[int:bytes]) -> "Project":
+    def from_bytes(data: bytes, patterns_bytes=Dict[int,bytes]) -> "Project":
         """
         Constructs a project object from bytes extracted from project file.
         :param data:
@@ -99,18 +107,21 @@ class Project:
 
         print("EXTRACTING pattern chain from sequence of bytes below:")
         print(data)
+        print(f"data length {len(data)}")
+
 
         result = []
 
         for byte in data:
             # each byte is just a pattern number
+            print(byte)
             if byte:
                 result.append(byte)
-
-            # break when we encounter zero. It stand for unoccupied slot.
-            # there could be no unoccupied slots in a sond (I guess?)
-            # todo: check that it's correct
-            break
+            else:
+                # break when we encounter zero. It stand for unoccupied slot.
+                # there could be no unoccupied slots in a sond (I guess?)
+                # todo: check that it's correct
+                break
 
         return result
 
@@ -148,7 +159,7 @@ class ProjectParser:
     def parse(self) -> Project:
 
         project_file_bytes = None
-        pattern_file_bytes_dict: Dict[int:bytes] = {}
+        pattern_file_bytes_dict: Dict[int, bytes] = {}
 
         with open(self.filepath, "rb") as f:
             project_file_bytes = f.read()  # f.read()[Project.OFFSET_START:Project.OFFSET_END]
@@ -167,8 +178,12 @@ class ProjectParser:
 
             pattern_file_path = pattern_file_path.replace("{}", pattern_number_string)
 
-            with open(pattern_file_path, "rb") as f:
-                # pattern
-                pattern_file_bytes_dict[i] = f.read()   # reads the whole file
+            try:
+                with open(pattern_file_path, "rb") as f:
+                    # pattern
+                    pattern_file_bytes_dict[i] = f.read()   # reads the whole file
+            except FileNotFoundError as e:
+                # it's okay. Not all patterns have to exist.
+                pass
 
         return Project.from_bytes(project_file_bytes, pattern_file_bytes_dict)
