@@ -3,14 +3,30 @@ from midiutil.MidiFile import NoteOff
 from parsers.patterns import Pattern, Note
 from midiutil import MIDIFile
 
+from parsers.project import Song
 
-class PatternToMidiExporter:
+
+class BaseMidiExporter:
+    """Base class for all midi exporters"""
 
     # midi utils uses either ticks of beats (quarter notes) as time
     # beats are expressed in floats
     # tracker uses 1/16 of s note
     # so this value is a tracker step duration to use with MIDIUtil
     MIDI_16TH_NOTE_TIME_VALUE = 0.25
+
+    def generate_midi(self) -> MIDIFile:
+        raise NotImplementedError()
+
+    def write_midi_file(self, path: str):
+
+        midi_file = self.generate_midi()
+
+        with open(path, "wb") as output_file:
+            midi_file.writeFile(output_file)
+
+
+class PatternToMidiExporter(BaseMidiExporter):
 
     def __init__(self, pattern: Pattern, tempo_bpm=120):
 
@@ -119,10 +135,7 @@ class PatternToMidiExporter:
 
                     duration = (note_end_position - step_number) * PatternToMidiExporter.MIDI_16TH_NOTE_TIME_VALUE
 
-
-                    # TODO: add support for chord fx
-                    # TODO: add support for arp fx
-
+                    # add actual notes to midi file data
                     if step.get_arp():
                         # arpeggio
                         arp = step.get_arp()
@@ -206,12 +219,63 @@ class PatternToMidiExporter:
 
         return midi_file
 
-    def write_midi_file(self, path: str):
 
-        midi_file = self.generate_midi()
+class SongToMidiExporter(BaseMidiExporter):
 
-        with open(path, "wb") as output_file:
-            midi_file.writeFile(output_file)
+    def __init__(self, song: Song):
+        self.song = song
 
+    def get_list_of_instruments(self):
+        """
+        Gets list of all actually used instruments
+        across all patterns of the song.
+        Used to create midi file with  proper instrument tracks.
+        :return:
+        """
+        instruments = set()
+        # iterate over unique patterns only
+        for pattern in self.song.pattern_mapping.values():
+            instruments.update(PatternToMidiExporter(pattern=pattern).get_list_of_instruments())
 
+        return sorted(instruments)
 
+    def generate_midi(self) -> MIDIFile:
+        # raise NotImplementedError()
+
+        # tracker tracks are not actual tracks, but voices,
+        # since every track can use any instrument at even given time and
+        # every track is monophonic.
+        # midi tracks typically represent different instruments and are polyphonic
+        # so we should count number of instruments in pattern and use it as
+        # number of tracks
+        instruments = self.get_list_of_instruments()
+        midi_tracks_count = len(instruments)
+
+        # this maps allows us to quickly find midi track for given instrument
+        # this should be faster than calling instruments.indexOf()
+        instrument_to_midi_track_map = {}
+
+        midi_file = MIDIFile(midi_tracks_count)
+        #FIXME: write bpm to song to get it from there
+        midi_file.addTempo(track=0, time=0, tempo=self.song.bpm)
+
+        for i in range(len(instruments)):
+            # todo: get actual track names from project file (or are they stored in instrument files?)
+            # todo: instrument 48 is midi instrument 1 the next 15 are also midi instruments - set their names
+            midi_file.addTrackName(track=i, time=0, trackName=f"Instrument {instruments[i]}")
+
+            instrument_to_midi_track_map[instruments[i]] = i
+
+        previous_pattern:Pattern = None
+
+        for pattern in self.song.get_song_as_patterns():
+
+            exporter = PatternToMidiExporter(pattern=pattern)
+
+            # todo: add arguments and handle them
+            exporter.generate_midi(midi_file=midi_file, instrument_to_midi_track_map=instrument_to_midi_track_map,
+                                   start_time=len(previous_pattern.tracks) * SongToMidiExporter.MIDI_16TH_NOTE_TIME_VALUE)
+
+            previous_pattern = pattern
+
+        return midi_file
