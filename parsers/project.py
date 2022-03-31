@@ -3,7 +3,9 @@
 __author__ = "Alexey 'DataGreed' Strelkov"
 
 import os
-from typing import List, Pattern, Dict
+from typing import List, Dict
+
+from parsers.patterns import Pattern
 
 
 class Song:
@@ -12,7 +14,7 @@ class Song:
     """
 
     """Maximum length of a song in patterns."""
-    MAXIMUM_SLOTS_PER_SONG = 255 # from docs
+    MAXIMUM_SLOTS_PER_SONG = 255  # from docs
 
     def __init__(self, pattern_chain: List[int], pattern_mapping: Dict[int:Pattern]):
         """
@@ -49,9 +51,14 @@ class Project:
         self.name = name
         self.song = song
 
-
     OFFSET_END = 0x624 #1572 bytes total files length
     OFFSET_START = 0
+
+    PATTERN_CHAIN_OFFSET = 0x10
+    PATTERN_CHAIN_END = 0x110   # length is 256 bytes (shouldnt it be 255 according to docs?)
+
+    # BPM_OFFSET_START =
+    # BPM_OFFSET_END =
 
     @staticmethod
     def from_bytes(data: bytes, patterns_bytes=Dict[int:bytes]) -> "Project":
@@ -59,7 +66,8 @@ class Project:
         Constructs a project object from bytes extracted from project file.
         :param data:
         :param patterns_bytes: a list of bytes for each of projects
-        patterns extracted from pattern files.
+        patterns extracted from pattern files. Note: expects full file
+        byte representation without offsets.
         :return:
         """
         expected_length = Project.OFFSET_END - Project.OFFSET_START  # 6152 or 769*8 just for sanity check
@@ -67,9 +75,45 @@ class Project:
         if len(data) != expected_length:
             raise ValueError(f"Expected project data {expected_length} bytes long, got {len(data)} instead")
 
-        raise NotImplementedError()
+        patterns_mapping = {}
 
-        return Project()
+        # parse patterns from received bytes for each pattern file
+        # and save them in a dict tha maps pattern number to Pattern object
+        # so it can be used later to construct a song
+        for key, value in patterns_bytes.items():
+            patterns_mapping[key] = Pattern.from_bytes(value[Pattern.OFFSET_START:Pattern.OFFSET_END])
+
+        bpm = 120   # todo: parse bpm from project file!
+
+        pattern_chain = Project.pattern_chain_from_bytes(data[Project.PATTERN_CHAIN_OFFSET:Project.PATTERN_CHAIN_END])
+
+        name = "MyProject"  # todo: extract from project files footer
+
+        return Project(name=name,
+                       song=Song(pattern_chain=pattern_chain, pattern_mapping=patterns_mapping),
+                       bpm=bpm)
+
+    @staticmethod
+    def pattern_chain_from_bytes(data: bytes) -> List[int]:
+        """extracts chain of patterns for song from project file bytes"""
+
+        print("EXTRACTING pattern chain from sequence of bytes below:")
+        print(data)
+
+        result = []
+
+        for byte in data:
+            # each byte is just a pattern number
+            if byte:
+                result.append(byte)
+
+            # break when we encounter zero. It stand for unoccupied slot.
+            # there could be no unoccupied slots in a sond (I guess?)
+            # todo: check that it's correct
+            break
+
+        return result
+
 
 
 class ProjectParser:
