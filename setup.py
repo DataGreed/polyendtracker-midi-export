@@ -5,11 +5,11 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
     requirements = fh.read()
 setup(
     name = 'polyendtracker-midi-export',
-    version = '0.0.1',
+    version = '0.2.0',
     author = 'Alexey Strelkov',
     author_email = 'datagreed@gmail.com',
     license = 'MIT License',
-    description = 'Unofficial tool that converts Polyend Tracker *.mtp pattern files to midi files.',
+    description = 'Unofficial tool that converts Polyend Tracker *.mt project and *.mtp pattern files to midi files.',
     long_description = long_description,
     long_description_content_type = "text/markdown",
     url = 'https://github.com/DataGreed/polyendtracker-midi-export',
