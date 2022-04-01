@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     parsed_project = project.parse()
     print("Finished parsing project.")
-    print(f"BPM: {parsed_project.bpm}")
+    print(f"BPM: {parsed_project.song.bpm}")
     print(f"pattern mapping: {parsed_project.song.pattern_mapping}")
     print(f"pattern chain: {parsed_project.song.pattern_chain}")
     print(f"song as patterns: {parsed_project.song.get_song_as_patterns()}")

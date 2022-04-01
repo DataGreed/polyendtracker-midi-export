@@ -16,7 +16,8 @@ class Song:
     """Maximum length of a song in patterns."""
     MAXIMUM_SLOTS_PER_SONG = 255  # from docs
 
-    def __init__(self, pattern_chain: List[int], pattern_mapping: Dict[int, Pattern]):
+    def __init__(self, pattern_chain: List[int], pattern_mapping: Dict[int, Pattern],
+                 bpm:float):
         """
 
         :param pattern_chain: a list of ints representing the order of patterns in the song.
@@ -24,6 +25,7 @@ class Song:
         :param pattern_mapping:   a dict with all of the unique patterns in the song.
         Keys are integer number of patterns, values are actual patterns.
         """
+        self.bpm = bpm
         if len(pattern_chain)>self.MAXIMUM_SLOTS_PER_SONG:
             raise ValueError(f"Maximum song length is {self.MAXIMUM_SLOTS_PER_SONG}, "
                              f"but {len(pattern_chain)} pattern long song received")
@@ -49,13 +51,12 @@ class Project:
     Represents a tracker project
     """
 
-    def __init__(self, name: str, song: Song, bpm: int):
+    def __init__(self, name: str, song: Song):
         """
         :param name: name of the project
         :param bpm: project tempo in beats per minutes. Tracker supports fractional tempo
         :param song: song (sequence of patterns to play)
         """
-        self.bpm = bpm
         self.name = name
         self.song = song
 
@@ -98,23 +99,25 @@ class Project:
         name = "MyProject"  # todo: extract from project files footer
 
         return Project(name=name,
-                       song=Song(pattern_chain=pattern_chain, pattern_mapping=patterns_mapping),
-                       bpm=bpm)
+                       song=Song(pattern_chain=pattern_chain,
+                                 pattern_mapping=patterns_mapping,
+                                 bpm=bpm),
+                       )
 
     @staticmethod
     def pattern_chain_from_bytes(data: bytes) -> List[int]:
         """extracts chain of patterns for song from project file bytes"""
 
-        print("EXTRACTING pattern chain from sequence of bytes below:")
-        print(data)
-        print(f"data length {len(data)}")
+        # print("EXTRACTING pattern chain from sequence of bytes below:")
+        # print(data)
+        # print(f"data length {len(data)}")
 
 
         result = []
 
         for byte in data:
             # each byte is just a pattern number
-            print(byte)
+            # print(byte)
             if byte:
                 result.append(byte)
             else:

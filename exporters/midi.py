@@ -1,3 +1,5 @@
+from typing import Optional
+
 from midiutil.MidiFile import NoteOff
 
 from parsers.patterns import Pattern, Note
@@ -15,8 +17,8 @@ class BaseMidiExporter:
     # so this value is a tracker step duration to use with MIDIUtil
     MIDI_16TH_NOTE_TIME_VALUE = 0.25
 
-    def generate_midi(self) -> MIDIFile:
-        raise NotImplementedError()
+    # def generate_midi(self) -> MIDIFile:
+    #     raise NotImplementedError()
 
     def write_midi_file(self, path: str):
 
@@ -59,38 +61,62 @@ class PatternToMidiExporter(BaseMidiExporter):
         # tracker C4 is 48
         return note.value+12
 
-    def generate_midi(self) -> MIDIFile:
+    def generate_midi(self, midi_file: MIDIFile = None,
+                      instrument_to_midi_track_map: dict = None,
+                      start_time_offset: float = 0) -> MIDIFile:
+
         degrees = [60, 62, 64, 65, 67, 69, 71, 72]  # MIDI note number
 
-        # tracker tracks are not actual tracks, but voices,
-        # since every track can use any instrument at even given time and
-        # every track is monophonic.
-        # midi tracks typically represent different instruments and are polyphonic
-        # so we should count number of instruments in pattern and use it as
-        # number of tracks
-        instruments = self.get_list_of_instruments()
-        midi_tracks_count = len(instruments)
+        if not instrument_to_midi_track_map:
+            # tracker tracks are not actual tracks, but voices,
+            # since every track can use any instrument at even given time and
+            # every track is monophonic.
+            # midi tracks typically represent different instruments and are polyphonic
+            # so we should count number of instruments in pattern and use it as
+            # number of tracks
+            instruments = self.get_list_of_instruments()
 
-        track = 0
+
+            # this maps allows us to quickly find midi track for given instrument
+            # this should be faster than calling instruments.indexOf()
+            instrument_to_midi_track_map = {}
+
+            for i in range(len(instruments)):
+                # todo: get actual track names from project file (or are they stored in instrument files?)
+                # todo: instrument 48 is midi instrument 1 the next 15 are also midi instruments - set their names
+                # midi_file.addTrackName(track=i, time=0, trackName=f"Instrument {instruments[i]}")
+
+                instrument_to_midi_track_map[instruments[i]] = i
+
+        else:
+            # instrument_to_midi_track_map is supploed in case we render
+            # a song. In this case we may have different instruments in different patterns
+            # and need a mappign for all of them. We also need to create a midi file
+            # with tracks for all used instruments.
+            instruments = instrument_to_midi_track_map.keys()
+
         channel = 0
-        time = 0  # In beats (is it 4:4?)
-        default_duration = 1  # In beats (is it 4:4?)
-        tempo = 60  # In BPM
         default_volume = 127  # 0-127, as per the MIDI standard
 
-        # this maps allows us to quickly find midi track for given instrument
-        # this should be faster than calling instruments.indexOf()
-        instrument_to_midi_track_map = {}
+        if not midi_file:
+            # if we are not supplied with a midi file,
+            # create a new one (we are supplied with one, e.g. if we render a song
+            # and we need to append pattern mido to existing file)
 
-        midi_file = MIDIFile(midi_tracks_count)
-        midi_file.addTempo(track=0, time=0, tempo=self.tempo_bpm)
+            track = 0
 
-        for i in range(len(instruments)):
-            # todo: get actual track names from project file (or are they stored in instrument files?)
-            # todo: instrument 48 is midi instrument 1 the next 15 are also midi instruments - set their names
-            midi_file.addTrackName(track=i, time=0, trackName=f"Instrument {instruments[i]}")
+            time = 0  # In beats (is it 4:4?)
+            default_duration = 1  # In beats (is it 4:4?)
+            tempo = 60  # In BPM
 
-            instrument_to_midi_track_map[instruments[i]] = i
+            midi_tracks_count = len(instruments)
+            midi_file = MIDIFile(midi_tracks_count)
+            midi_file.addTempo(track=0, time=0, tempo=self.tempo_bpm)
+
+            for i in range(len(instruments)):
+                # todo: get actual track names from project file (or are they stored in instrument files?)
+                # todo: instrument 48 is midi instrument 1 the next 15 are also midi instruments - set their names
+                midi_file.addTrackName(track=i, time=0, trackName=f"Instrument {instruments[i]}")
 
         for track in self.pattern.tracks:
 
@@ -182,7 +208,7 @@ class PatternToMidiExporter(BaseMidiExporter):
                             midi_file.addNote(track=instrument_to_midi_track_map[step.instrument_number],
                                               channel=channel,
                                               pitch=PatternToMidiExporter.get_midi_note_value(note),
-                                              time=arp_note_start_time,
+                                              time=start_time_offset + arp_note_start_time,
                                               duration=arp_note_duration,
                                               # TODO: write velocity fx value if set (needs to be converted to 0...127!!!)
                                               volume=default_volume,
@@ -200,7 +226,7 @@ class PatternToMidiExporter(BaseMidiExporter):
                             midi_file.addNote(track=instrument_to_midi_track_map[step.instrument_number],
                                               channel=channel,
                                               pitch=PatternToMidiExporter.get_midi_note_value(note),
-                                              time=step_number * PatternToMidiExporter.MIDI_16TH_NOTE_TIME_VALUE,
+                                              time=start_time_offset + step_number * PatternToMidiExporter.MIDI_16TH_NOTE_TIME_VALUE,
                                               duration=duration,
                                               # TODO: write velocity fx value if set (needs to be converted to 0...127!!!)
                                               volume=default_volume,
@@ -211,7 +237,7 @@ class PatternToMidiExporter(BaseMidiExporter):
                         midi_file.addNote(track=instrument_to_midi_track_map[step.instrument_number],
                                           channel=channel,
                                           pitch=PatternToMidiExporter.get_midi_note_value(step.note),
-                                          time=step_number*PatternToMidiExporter.MIDI_16TH_NOTE_TIME_VALUE,
+                                          time=start_time_offset + step_number*PatternToMidiExporter.MIDI_16TH_NOTE_TIME_VALUE,
                                           duration=duration,
                                           # TODO: write velocity fx value if set (needs to be converted to 0...127!!!)
                                           volume=default_volume,
@@ -266,15 +292,30 @@ class SongToMidiExporter(BaseMidiExporter):
 
             instrument_to_midi_track_map[instruments[i]] = i
 
-        previous_pattern:Pattern = None
+        print(f"instruments: {instruments}")
+        print(f"instrument_to_midi_track_map: {instrument_to_midi_track_map}")
 
-        for pattern in self.song.get_song_as_patterns():
+        previous_pattern: Optional[Pattern] = None
 
+        j = 0
+        start_time_offset = 0
+        print(self.song.pattern_chain)
+        for pattern in self.song.get_song_as_patterns():    #fixme: temporary slice for debug
+            j+=1
+            print(f"Rendering song slot {j}")
             exporter = PatternToMidiExporter(pattern=pattern)
 
+            if previous_pattern:
+                # every next pattern should write midi data
+                # after the previous pattern ended,
+                # so we have to add time offset for every pattern
+                start_time_offset += previous_pattern.tracks[0].length * SongToMidiExporter.MIDI_16TH_NOTE_TIME_VALUE
+
             # todo: add arguments and handle them
-            exporter.generate_midi(midi_file=midi_file, instrument_to_midi_track_map=instrument_to_midi_track_map,
-                                   start_time=len(previous_pattern.tracks) * SongToMidiExporter.MIDI_16TH_NOTE_TIME_VALUE)
+            # todo: no need to do value declaration here really, we already pass it by reference
+            midi_file = exporter.generate_midi(midi_file=midi_file,
+                                               instrument_to_midi_track_map=instrument_to_midi_track_map,
+                                                start_time_offset=start_time_offset)
 
             previous_pattern = pattern
 
