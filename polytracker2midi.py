@@ -85,19 +85,22 @@ def main():
         print("Trying to export patterns...")
 
         for number, pattern in parsed_project.song.pattern_mapping.items():
-            midi_exporter = midi.PatternToMidiExporter(pattern=pattern)
+            midi_exporter = midi.PatternToMidiExporter(pattern=pattern, tempo_bpm=int(parsed_project.song.bpm))
 
             number_string = str(number)
-            if len(number_string)<2:
+            if len(number_string) < 2:
                 number_string = "0" + number_string
 
             # create directory for patterns
+            # in the same folder we export project to
+            out_folder = os.sep.join(output_filename.split(os.sep)[:-1]) + os.sep
+
             try:
-                os.mkdir(p.folder + "patterns_midi/")
+                os.mkdir(out_folder + "patterns_midi/")
             except FileExistsError:
                 pass
 
-            pattern_output_filename = p.folder + "patterns_midi/" + f"pattern_{number_string}.mid"
+            pattern_output_filename = out_folder + "patterns_midi/" + f"pattern_{number_string}.mid"
             midi_exporter.write_midi_file(pattern_output_filename)
             print(f"Exported pattern midi to {os.path.abspath(pattern_output_filename)}")
 
