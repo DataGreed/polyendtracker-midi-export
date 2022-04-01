@@ -32,3 +32,14 @@ E.g. 01 01 02 stands for 1,1,2 patterns
 
 so the offset seems to be 0x10 with length of 256 bytes 
 
+# upd
+Okay, I've re-saved the files again properly with names corresponding to bpms.
+I see that bpms with fractions take 4 bytes. Seems like they just use a float.
+
+Checked 40.1 bpm:
+
+> round(struct.unpack('f', bytes([0x66,0x66,0x20,0x42]))[0], 1)
+> 40.1
+> 
+Yup, that is correct. offset 0x1c and length is 4 bytes.
+
