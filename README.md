@@ -49,15 +49,15 @@ You can see an example of pattern text representation [here](./reverse-engineeri
   - support for velocity (volume FX)
   - ~~support for chord FX~~
     - make sure that all chord interval formulas are correct 
-  - support for arp FX
+  - ~~support for arp FX~~
   - support for microtiming (micromove, `m`) FX
   - support for microtuning `M` fx (do midi files support that?) 
   - ~~cli tool for converting files~~
   - support for panning ([it seems](http://midi.teragonaudio.com/tech/midispec/pan.htm) to be supported by midi )
 - Song arrangement MIDI export
-  - export
-  - extract BPM
-  - cli tool for converting files 
+  - ~~export~~
+  - ~~extract BPM~~
+  - ~~cli tool for converting files~~
   - assign instrument names to midi tracks from instrument project files
 - ~~PyPi package~~
 - conversion web service
