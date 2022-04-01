@@ -3,6 +3,7 @@
 __author__ = "Alexey 'DataGreed' Strelkov"
 
 import os
+import struct
 from typing import List, Dict
 
 from parsers.patterns import Pattern
@@ -66,8 +67,8 @@ class Project:
     PATTERN_CHAIN_OFFSET = 0x10
     PATTERN_CHAIN_END = 0x10f   # length is 255 bytes
 
-    # BPM_OFFSET_START =
-    # BPM_OFFSET_END =
+    BPM_OFFSET_START = 0x1c0
+    BPM_BYTES_LENGTH = 4    # it's a 32bit float. The 40-800 and limit and 0.1 precision are artificial
 
     @staticmethod
     def from_bytes(data: bytes, patterns_bytes=Dict[int,bytes]) -> "Project":
@@ -92,11 +93,17 @@ class Project:
         for key, value in patterns_bytes.items():
             patterns_mapping[key] = Pattern.from_bytes(value[Pattern.OFFSET_START:Pattern.OFFSET_END])
 
-        bpm = 120   # todo: parse bpm from project file!
+        bpm = Project.bpm_from_bytes(data[Project.BPM_OFFSET_START:Project.BPM_OFFSET_START+Project.BPM_BYTES_LENGTH])
 
         pattern_chain = Project.pattern_chain_from_bytes(data[Project.PATTERN_CHAIN_OFFSET:Project.PATTERN_CHAIN_END])
 
-        name = "MyProject"  # todo: extract from project files footer
+        # todo: extract from project files footer
+        # tracker project files actually store file names inside of them, but
+        # the problem is that it seems to be buggy, since a lot of times i see
+        # part of the previous project names in new projects with shorter names.
+        # not sure if it's actually possible to unpack a real, not mangled name
+        # from a project file.
+        name = "MyProject"
 
         return Project(name=name,
                        song=Song(pattern_chain=pattern_chain,
@@ -112,7 +119,6 @@ class Project:
         # print(data)
         # print(f"data length {len(data)}")
 
-
         result = []
 
         for byte in data:
@@ -127,6 +133,14 @@ class Project:
                 break
 
         return result
+
+    @staticmethod
+    def bpm_from_bytes(data: bytes) -> List[int]:
+
+        if len(data) != 4:
+            raise ValueError(f"Length of data for BPM should be 4 bytes, but received {len(bytes)}: {bytes}")
+        # unpacks 4 bytes to a float
+        return round(struct.unpack('f', data)[0], 1)
 
 
 
