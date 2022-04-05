@@ -52,6 +52,18 @@ pattern similar to how you see it in Tracker UI):
 
 You can see an example of pattern text representation [here](./reverse-engineering/session%201/project%20files/datagreed%20-%20rebel%20path%20tribute%202/patterns/pattern_01.txt)
 
+## Usage in python projects
+
+Import lib:
+
+```python
+import polytrackermidi
+```
+
+```python
+#todo: describe API usage
+```  
+
 ## Reverse Engineering
 
 - [Pattern *.mtp files](reverse-engineering/patterns-reverse-engineering.md)

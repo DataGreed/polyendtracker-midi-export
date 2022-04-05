@@ -5,7 +5,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
     requirements = fh.read()
 setup(
     name = 'polyendtracker-midi-export',
-    version = '0.2.2',
+    version = '0.2.3',
     author = 'Alexey Strelkov',
     author_email = 'datagreed@gmail.com',
     license = 'MIT License',
@@ -13,7 +13,7 @@ setup(
     long_description = long_description,
     long_description_content_type = "text/markdown",
     url = 'https://github.com/DataGreed/polyendtracker-midi-export',
-    py_modules = ['parsers', 'exporters'],
+    py_modules = ['polytrackermidi'],
     packages = find_packages(),
     install_requires = [requirements],
     python_requires='>=3.7',
