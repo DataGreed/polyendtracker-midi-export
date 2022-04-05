@@ -14,6 +14,23 @@ pip install polyendtracker-midi-export
 
 ## Usage
 
+### Converting an entire Tracker project to MIDI
+
+Just point the script to your project's directory:
+
+```sh
+$ polymidiexport ./my-tracker-project/ 
+```
+
+Alternatively point it to a project file:
+
+```sh
+$ polymidiexport ./my-tracker-project/project-file.mt 
+```
+
+
+### Converting an individual Tracker pattern file to MIDI
+
 Converting Polyend Tracker `*.mtp` pattern file to midi (pattern files are nested in project folders under `patterns`):
 
 ```sh

@@ -5,7 +5,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
     requirements = fh.read()
 setup(
     name = 'polyendtracker-midi-export',
-    version = '0.2.1',
+    version = '0.2.2',
     author = 'Alexey Strelkov',
     author_email = 'datagreed@gmail.com',
     license = 'MIT License',
