@@ -1,7 +1,6 @@
-from copy import deepcopy
 from typing import List
 
-from parsers.patterns import Note
+from polytrackermidi.parsers.patterns import Note
 
 
 class Chord:

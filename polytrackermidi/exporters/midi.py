@@ -1,11 +1,9 @@
 from typing import Optional
 
-from midiutil.MidiFile import NoteOff
-
-from parsers.patterns import Pattern, Note
+from polytrackermidi.parsers.patterns import Pattern, Note
 from midiutil import MIDIFile
 
-from parsers.project import Song
+from polytrackermidi.parsers.project import Song
 
 
 class BaseMidiExporter:

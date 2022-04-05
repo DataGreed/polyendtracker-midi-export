@@ -1,7 +1,7 @@
 
 if __name__ == '__main__':
 
-    from parsers import patterns, project
+    from polytrackermidi.parsers import project
 
     # # todo: remove this and implement tests
     # p = patterns.PatternParser(

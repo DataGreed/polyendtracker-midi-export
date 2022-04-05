@@ -6,7 +6,7 @@ import os
 import struct
 from typing import List, Dict
 
-from parsers.patterns import Pattern
+from polytrackermidi.parsers.patterns import Pattern
 
 
 class Song:

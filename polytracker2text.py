@@ -2,8 +2,7 @@ import os
 import sys
 from sys import argv
 
-from parsers import patterns
-from exporters import midi
+from polytrackermidi.parsers import patterns
 
 
 def print_usage(message="", exit_program=True, exit_code=1):

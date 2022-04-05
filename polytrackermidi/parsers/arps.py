@@ -2,7 +2,7 @@ import itertools
 import random
 from enum import Enum
 
-from parsers.chords import Chord
+from polytrackermidi.parsers.chords import Chord
 
 class ArpDirection(Enum):
     raising = 1
