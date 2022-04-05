@@ -189,6 +189,8 @@ class ProjectParser:
             #  255 patterns, how pattern 100 file will be named if
             #  there is only 1 leading zero in one digit projects?
 
+            # answer: it looks like that: pattern_255.mtp
+
             pattern_number_string = str(i)
             if len(pattern_number_string) < 2:
                 pattern_number_string = "0" + pattern_number_string
