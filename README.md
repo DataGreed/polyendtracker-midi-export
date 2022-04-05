@@ -58,6 +58,8 @@ Import lib:
 
 ```python
 import polytrackermidi
+from polytrackermidi.parsers import constants, project, patterns, arps, chords
+from polytrackermidi.exporters import midi
 ```
 
 ```python
