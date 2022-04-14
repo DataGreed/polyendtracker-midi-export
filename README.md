@@ -1,6 +1,9 @@
 # Polyend Tracker MIDI Export tool
 
-MIDI conversion tool for Polyend Tracker project files. 
+MIDI conversion tool for Polyend Tracker project files written in Python.
+
+If you just want to convert your Tracker project to MIDI you can use the Web Service: https://polyend-tracker-midi-export.onrender.com/
+
 
 ## Disclaimer
 
@@ -13,6 +16,8 @@ pip install polyendtracker-midi-export
 ```
 
 ## Usage
+
+Polyend Tracker MIDI Export tool can be used as a command line utility or as a library that can be imported in your python projects.
 
 ### Converting an entire Tracker project to MIDI
 
@@ -91,5 +96,5 @@ from polytrackermidi.exporters import midi
   - ~~cli tool for converting files~~
   - assign instrument names to midi tracks from instrument project files
 - ~~PyPi package~~
-- conversion web service
+- ~~conversion web service~~ – https://polyend-tracker-midi-export.onrender.com/
 
