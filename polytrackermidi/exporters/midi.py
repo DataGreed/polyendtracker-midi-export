@@ -42,7 +42,7 @@ class PatternToMidiExporter(BaseMidiExporter):
 
         for track in self.pattern.tracks:
             for step in track.steps:
-                if step.instrument_number:
+                if step.instrument_number is not None:  # can be zero
                     instruments.add(step.instrument_number)
 
         return sorted(instruments)
