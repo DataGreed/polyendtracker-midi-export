@@ -182,7 +182,7 @@ class Step:
 
     def render_as_table_cell(self):
 
-        return f"{self.note}".rjust(3) +f"{self.instrument_number or '--'}".rjust(3) + f"{self.fx1} {self.fx2}"
+        return f"{self.note}".rjust(3) +f"{self.instrument_number if self.instrument_number is not None else '--'}".rjust(3) + f"{self.fx1} {self.fx2}"
 
     @staticmethod
     def from_bytes(data: bytes):
