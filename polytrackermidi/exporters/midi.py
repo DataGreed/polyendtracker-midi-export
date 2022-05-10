@@ -231,6 +231,14 @@ class PatternToMidiExporter(BaseMidiExporter):
                                               )
 
                     else:
+                        # note that there is a bug in MIDIUtil
+                        # that sometimes crashes when a note played by the same
+                        # instrument is overlapping with itself
+                        # https://github.com/MarkCWirt/MIDIUtil/issues/34
+                        # there is also a bug with track numbers/note values overlapping
+                        # that is also described in the same deInterlaveNotes method in MIDIUtil
+
+
                         # default case - just a regular single note playing
                         midi_file.addNote(track=instrument_to_midi_track_map[step.instrument_number],
                                           channel=channel,
